@@ -19,6 +19,33 @@ public class BookService {
         return bookRepository.getBooks();
     }
 
+    public List<String> getFields() {
+        return bookRepository.getFields();
+    }
+
+    private void vaidateFieldSearch(String field, String query) {
+        List<String> fields = getFields();
+
+        ArrayList<String> problems = new ArrayList<>();
+        if(field == null || field.isBlank()) {
+            problems.add("Field name cannot be empty");
+        }
+        if(query == null || query.isBlank()) {
+            problems.add("Query cannot be empty");
+        }
+        if (!fields.contains(field)) {
+            problems.add("Must be a valid field name");
+        }
+        if(!problems.isEmpty()) {
+            throw new IllegalArgumentException(String.join(", ", problems));
+        }
+    }
+
+    public List<Book> getBooksByField(String field, String query) {
+        vaidateFieldSearch(field, query);
+        return bookRepository.getBooksByField(field, query);
+    }
+
     public Book getBookById(int bookId) {
         return bookRepository.getBookById(bookId);
     }
