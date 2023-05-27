@@ -29,6 +29,12 @@ public class BookResource {
         List<String> fields = bookService.getFields();
         return new ResponseEntity<>(fields, HttpStatus.OK);
     }
+    @GetMapping("/{field}/{query}")
+    public ResponseEntity<List<Book>> getBooksByField(@PathVariable("field")String field, @PathVariable("query") String query) {
+        query = query.replace("_", " ");
+        List<Book> books = bookService.getBooksByField(field, query);
+        return new ResponseEntity<>(books, HttpStatus.OK);
+    }
 
     @GetMapping("/{bookId}")
     public ResponseEntity<Book> getBookById(@PathVariable("bookId") int bookId) {
