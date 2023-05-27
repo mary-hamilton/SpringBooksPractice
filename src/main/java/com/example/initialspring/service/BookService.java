@@ -42,7 +42,9 @@ public class BookService {
     }
 
     public List<Book> getBooksByField(String field, String query) {
+        query = query.replace("_", " ");
         vaidateFieldSearch(field, query);
+        field = enragingConverter(field);
         return bookRepository.getBooksByField(field, query);
     }
 
@@ -61,6 +63,22 @@ public class BookService {
         if(!problems.isEmpty()) {
             throw new IllegalArgumentException(String.join(", ", problems));
         }
+    }
+    private String enragingConverter(String field) {
+        switch(field) {
+            case "author_name":
+                field = "a.name";
+                break;
+            case "category_title":
+                field = "c.title";
+                break;
+            case "book_title":
+                field = "b.title";
+                break;
+            default:
+                field = "b." + field;
+        }
+        return field;
     }
 
     public Book createBook(String title, String synopsis, int categoryId, int authorId) throws IllegalArgumentException {

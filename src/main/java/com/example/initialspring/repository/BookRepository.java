@@ -49,26 +49,8 @@ public class BookRepository {
     }
 
     public List<Book> getBooksByField(String field, String query) {
-        field = enragingConverter(field);
         String customQuery = SQL_SELECT + "WHERE " + field + " = ?";
         return jdbcTemplate.query(customQuery, bookRowMapper, query);
-    }
-
-    private String enragingConverter(String field) {
-        switch(field) {
-            case "author_name":
-                field = "a.name";
-                break;
-            case "category_title":
-                field = "c.title";
-                break;
-            case "book_title":
-                field = "b.title";
-                break;
-            default:
-                field = "b." + field;
-        }
-        return field;
     }
 
     public List<String> getFields() {
