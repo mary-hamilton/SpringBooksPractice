@@ -24,6 +24,12 @@ public class BookResource {
         return new ResponseEntity<>(books, HttpStatus.OK);
     }
 
+    @GetMapping("/fields")
+    public ResponseEntity<List<String>> getFields() {
+        List<String> fields = bookService.getFields();
+        return new ResponseEntity<>(fields, HttpStatus.OK);
+    }
+
     @GetMapping("/{bookId}")
     public ResponseEntity<Book> getBookById(@PathVariable("bookId") int bookId) {
         Book book = bookService.getBookById(bookId);

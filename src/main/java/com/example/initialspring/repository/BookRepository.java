@@ -10,7 +10,9 @@ import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
 import java.sql.PreparedStatement;
+import java.sql.ResultSetMetaData;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.List;
 
 @Repository
@@ -34,6 +36,11 @@ public class BookRepository {
     private static final String SQL_CREATE = "INSERT INTO Book (title, synopsis, category_id, author_id) VALUES (?,?,?,?)";
     private static final String SQL_UPDATE = "UPDATE Book SET title = ?, synopsis = ?, category_id = ?, author_id = ? WHERE book_id = ?";
     private static final String SQL_DELETE = "DELETE FROM Book WHERE book_id = ?";
+    private static final String SQL_COLUMN_NAMES = "SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'Book'";
+
+
+
+
     private final JdbcTemplate jdbcTemplate;
 
     public BookRepository(JdbcTemplate jdbcTemplate) {
@@ -51,6 +58,24 @@ public class BookRepository {
     public List<Book> getBooks() {
         return jdbcTemplate.query(SQL_SELECT, bookRowMapper);
     }
+
+//    public List<Book> getBooksByField(String field, String search) {
+//        return jdbcTemplate.query(?, bookRowMapper, search);
+//    }
+//
+//    public String validateField(String field) {
+//        return field;
+//    }
+
+    public List<String> getFields() {
+        return jdbcTemplate.query(SQL_COLUMN_NAMES, fieldRowMapper);
+    }
+
+    private final RowMapper<String> fieldRowMapper = ((rs, rowNum) ->
+        rs.getString("column_name")
+    );
+
+
 
     public Book getBookById(int bookId) {
         return jdbcTemplate.queryForObject(SQL_SELECT_BY_ID, bookRowMapper, bookId);

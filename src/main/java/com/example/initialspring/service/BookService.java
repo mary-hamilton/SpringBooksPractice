@@ -19,6 +19,10 @@ public class BookService {
         return bookRepository.getBooks();
     }
 
+    public List<String> getFields() {
+        return bookRepository.getFields();
+    }
+
     public Book getBookById(int bookId) {
         return bookRepository.getBookById(bookId);
     }
