@@ -94,4 +94,8 @@ public class BookRepository {
     public void deleteBook(int bookId) {
         jdbcTemplate.update(SQL_DELETE, bookId);
     }
+
+    public static String getSqlSelect() {
+        return SQL_SELECT;
+    }
 }

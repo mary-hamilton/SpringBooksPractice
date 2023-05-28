@@ -7,6 +7,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Service
 @Transactional
@@ -25,18 +27,17 @@ public class BookService {
 
     private void vaidateFieldSearch(String field, String query) {
         List<String> fields = getFields();
-
         ArrayList<String> problems = new ArrayList<>();
-        if(field == null || field.isBlank()) {
+        if (field == null || field.isBlank()) {
             problems.add("Field name cannot be empty");
         }
-        if(query == null || query.isBlank()) {
+        if (query == null || query.isBlank()) {
             problems.add("Query cannot be empty");
         }
         if (!fields.contains(field)) {
             problems.add("Must be a valid field name");
         }
-        if(!problems.isEmpty()) {
+        if (!problems.isEmpty()) {
             throw new IllegalArgumentException(String.join(", ", problems));
         }
     }
@@ -54,29 +55,28 @@ public class BookService {
 
     private void validateBook(String title, String synopsis) throws IllegalArgumentException {
         ArrayList<String> problems = new ArrayList<>();
-        if(title == null || title.isBlank()) {
+        if (title == null || title.isBlank()) {
             problems.add("Title cannot be empty");
         }
-        if(synopsis == null || synopsis.isBlank()) {
+        if (synopsis == null || synopsis.isBlank()) {
             problems.add("Synopsis cannot be empty");
         }
-        if(!problems.isEmpty()) {
+        if (!problems.isEmpty()) {
             throw new IllegalArgumentException(String.join(", ", problems));
         }
     }
     private String enragingConverter(String field) {
-        switch(field) {
-            case "author_name":
-                field = "a.name";
-                break;
-            case "category_title":
-                field = "c.title";
-                break;
-            case "book_title":
-                field = "b.title";
-                break;
-            default:
-                field = "b." + field;
+        Pattern aliasTester = Pattern.compile("(\\w\\.\\w+)\\s+as\\s+(\\w+)");
+        Matcher aliasFinder = aliasTester.matcher(BookRepository.getSqlSelect());
+        boolean aliased = false;
+        while(aliasFinder.find()) {
+            if (field.equals(aliasFinder.group(2))){
+                field = aliasFinder.group(1);
+                aliased = true;
+            }
+        }
+        if (!aliased) {
+            field = "b." + field;
         }
         return field;
     }
