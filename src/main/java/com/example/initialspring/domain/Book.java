@@ -15,7 +15,6 @@ public class Book {
         this.synopsis = synopsis;
         this.category = category;
         this.author = author;
-
     }
 
     public int getBookId() {
